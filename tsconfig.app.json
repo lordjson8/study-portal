@@ -2,7 +2,7 @@
   "compilerOptions": {
 
     // absolute imports
-     "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
