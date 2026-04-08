@@ -178,6 +178,11 @@ code {
 
     --color-primary: var(--primary);
 
+    --color-brand-blue: var(--brand-blue);
+    --color-brand-blue-soft: var(--brand-blue-soft);
+    --color-brand-orange: var(--brand-orange);
+    --color-brand-orange-foreground: var(--brand-orange-foreground);
+
     --color-popover-foreground: var(--popover-foreground);
 
     --color-popover: var(--popover);
@@ -222,9 +227,13 @@ code {
 
     --popover-foreground: oklch(0.145 0 0);
 
-    --primary: oklch(0.205 0 0);
-
+ /*  */
+    --primary: oklch(0.55 0.24 263);          /* boaz blue */
     --primary-foreground: oklch(0.985 0 0);
+    --brand-blue: oklch(0.55 0.24 263);
+    --brand-blue-soft: oklch(0.94 0.04 263);  /* sidebar active pill bg */
+    --brand-orange: oklch(0.72 0.18 50);      /* CTA orange */
+    --brand-orange-foreground: oklch(0.99 0 0);
 
     --secondary: oklch(0.97 0 0);
 
