@@ -84,51 +84,59 @@ describe("usePermissions — user profile", () => {
     expect(result.current.hasPermission("ticket:update")).toBe(false);
   });
 
-  it('can read and download documents but cannot upload', () => {
+  it("can read and download documents but cannot upload", () => {
     const { result } = renderHook(() => usePermissions());
-    expect(result.current.hasPermission('document:read')).toBe(true);
-    expect(result.current.hasPermission('document:download')).toBe(true);
-    expect(result.current.hasPermission('document:upload')).toBe(false);
+    expect(result.current.hasPermission("document:read")).toBe(true);
+    expect(result.current.hasPermission("document:download")).toBe(true);
+    expect(result.current.hasPermission("document:upload")).toBe(false);
   });
 });
 
-describe('usePermissions — readonly profile', () => {
-  beforeEach(() => loginAs('readonly'));
+describe("usePermissions — readonly profile", () => {
+  beforeEach(() => loginAs("readonly"));
 
-  it('has zero write permissions', () => {
+  it("has zero write permissions", () => {
     const { result } = renderHook(() => usePermissions());
     const writes: Permission[] = [
-      'ticket:create',
-      'ticket:update',
-      'ticket:comment',
-      'document:upload',
-      'document:download',
+      "ticket:create",
+      "ticket:update",
+      "ticket:comment",
+      "document:upload",
+      "document:download",
     ];
     for (const scope of writes) {
       expect(result.current.hasPermission(scope)).toBe(false);
     }
   });
 
-  it('still has read permissions', () => {
+  it("still has read permissions", () => {
     const { result } = renderHook(() => usePermissions());
-    expect(result.current.hasAllPermissions(['ticket:read', 'document:read', 'notification:read'])).toBe(true);
+    expect(
+      result.current.hasAllPermissions([
+        "ticket:read",
+        "document:read",
+        "notification:read",
+      ]),
+    ).toBe(true);
   });
 });
 
-describe('usePermissions — predicate edge cases', () => {
-  beforeEach(() => loginAs('user'));
+describe("usePermissions — predicate edge cases", () => {
+  beforeEach(() => loginAs("user"));
 
-  it('hasAnyPermission returns true if at least one matches', () => {
+  it("hasAnyPermission returns true if at least one matches", () => {
     const { result } = renderHook(() => usePermissions());
-    expect(result.current.hasAnyPermission(['ticket:create', 'ticket:read'])).toBe(true);
+    expect(
+      result.current.hasAnyPermission(["ticket:create", "ticket:read"]),
+    ).toBe(true);
   });
 
-  it('hasAnyPermission returns false on empty list', () => {
+  it("hasAnyPermission returns false on empty list", () => {
     const { result } = renderHook(() => usePermissions());
     expect(result.current.hasAnyPermission([])).toBe(false);
   });
 
-  it('hasAllPermissions returns true on empty list (vacuous truth)', () => {
+  it("hasAllPermissions returns true on empty list (vacuous truth)", () => {
     const { result } = renderHook(() => usePermissions());
     expect(result.current.hasAllPermissions([])).toBe(true);
   });

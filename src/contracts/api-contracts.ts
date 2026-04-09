@@ -1,70 +1,68 @@
 export interface ApiResponse<T> {
-    data: T;
-    success: boolean;
-    message?: string;
+  data: T;
+  success: boolean;
+  message?: string;
 }
 
 export interface JwtClaims {
-    sub: string;
-    preferred_username: string;
-    email: string;
-    realm_access: {
-        roles: string[];
+  sub: string;
+  preferred_username: string;
+  email: string;
+  realm_access: {
+    roles: string[];
+  };
+  resource_access: {
+    [clientId: string]: {
+      roles: string[];
     };
-    resource_access: {
-        [clientId: string]: {
-            roles: string[];
-        }
-    }
-    scope: string;
-    authorities: Permission[];
-    exp: number;
+  };
+  scope: string;
+  authorities: Permission[];
+  exp: number;
 }
-
 
 export interface AuthUser {
-    sub: string;
-    preferred_username: string;
-    email: string;
-    authorities: Permission[];
+  sub: string;
+  preferred_username: string;
+  email: string;
+  authorities: Permission[];
 }
 
-
 export type Permission =
-    | 'ticket:create'
-    | 'ticket:read'
-    | 'ticket:update'
-    | 'ticket:comment'
-    | 'document:upload'
-    | 'document:read'
-    | 'document:download'
-    | 'notification:read'
+  | "ticket:create"
+  | "ticket:read"
+  | "ticket:update"
+  | "ticket:comment"
+  | "document:upload"
+  | "document:read"
+  | "document:download"
+  | "notification:read";
 
-export type TicketStatus = 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
-export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH';
+export type TicketStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+export type TicketPriority = "LOW" | "MEDIUM" | "HIGH";
 
 export interface Ticket {
-    id: string;
-    title: string;
+  id: string;
+  title: string;
 
-    description: string;
-    status: TicketStatus;
-    priority: TicketPriority;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
 
-    createdAt: string;
-    updatedAt: string;
+  createdAt: string;
+  updatedAt: string;
 
-    createdBy: string;
-    comments: TicketComment[];
+  createdBy: string;
+  comments: TicketComment[];
 }
 
 export interface TicketComment {
-    id: string;
-    ticketId: string;
-    authorSub: string;
-    authorName: string;
-    body: string;
-    createdAt: string;
+  id: string;
+  ticketId: string;
+  authorSub: string;
+  authorName: string;
+  body: string;
+  createdAt: string;
 }
 
 export interface CreateTicketPayload {
@@ -83,22 +81,21 @@ export interface CreateCommentPayload {
 }
 
 export type DocumentKind =
-  | 'ATTESTATION_LOGEMENT'
-  | 'ATTESTATION_VIREMENT'
-  | 'JUSTIFICATIF'
-  | 'AUTRE';
-
+  | "ATTESTATION_LOGEMENT"
+  | "ATTESTATION_VIREMENT"
+  | "JUSTIFICATIF"
+  | "AUTRE";
 
 export interface DocumentItem {
-    id: string;
-    name: string;
-    kind: DocumentKind;
+  id: string;
+  name: string;
+  kind: DocumentKind;
 
-    mimeType: string;
-    size: number;
-    uploadedAt: string;
-    uploadedBy: string;
-    downloadUrl: string;
+  mimeType: string;
+  size: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  downloadUrl: string;
 }
 
 export interface UploadDocumentPayload {
@@ -106,14 +103,14 @@ export interface UploadDocumentPayload {
   kind: DocumentKind;
 }
 
-export type NotificationLevel = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
+export type NotificationLevel = "INFO" | "SUCCESS" | "WARNING" | "ERROR";
 
 export interface AppNotification {
   id: string;
   level: NotificationLevel;
   title: string;
   body: string;
- 
+
   read: boolean;
   createdAt: string;
 }

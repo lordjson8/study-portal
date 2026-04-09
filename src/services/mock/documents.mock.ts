@@ -30,7 +30,7 @@ export const MOCK_DOCUMENTS: DocumentItem[] = [
 
     mimeType: "application/pdf",
     size: 184_320,
-    uploadedAt: "2026-03-9T09:30:00.000Z",
+    uploadedAt: "2026-03-09T09:30:00.000Z",
     uploadedBy: "user-uuid-user",
     downloadUrl: "/mock/documents/doc-2.pdf",
   },

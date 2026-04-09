@@ -1,4 +1,9 @@
-import type { ApiResponse, AppNotification, DocumentItem, Ticket } from "@/contracts/api-contracts";
+import type {
+  ApiResponse,
+  AppNotification,
+  DocumentItem,
+  Ticket,
+} from "@/contracts/api-contracts";
 import { MOCK_TICKETS } from "./mock/tickets.mock";
 import { MOCK_DOCUMENTS } from "./mock/documents.mock";
 import { MOCK_NOTIFICATIONS } from "./mock/notifications.mock";
@@ -23,6 +28,9 @@ export function mockResolver(req: MockRequest): MockResolverResult {
   }
 
   const ticketDetail = path.match(/\/tickets\/([^/]+)$/);
+
+  // console.log(path,ticketDetail,req.url)
+
   if (method === "GET" && ticketDetail) {
     const id = ticketDetail[1];
     const found = MOCK_TICKETS.find((t) => t.id === id);

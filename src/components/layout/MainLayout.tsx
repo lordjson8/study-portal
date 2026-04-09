@@ -1,6 +1,7 @@
 import { Outlet, useMatches } from "react-router";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { DevProfileSwitcher } from "../DevProfileSwitcher";
 
 interface RouteHandle {
   title?: string;
@@ -23,6 +24,7 @@ export function MainLayout() {
           <Outlet />
         </main>
       </div>
+      <DevProfileSwitcher />
     </div>
   );
 }

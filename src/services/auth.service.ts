@@ -43,10 +43,10 @@ export const authService = {
     }
 
     return {
-        sub: claims.sub,
-        preferred_username: claims.preferred_username,
-        email: claims.email,
-        authorities: claims.authorities
-    }
+      sub: claims.sub,
+      preferred_username: claims.preferred_username,
+      email: claims.email,
+      authorities: claims.authorities,
+    };
   },
 };

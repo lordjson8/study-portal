@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 }));
 
-const EMPTY_AUTHORITIES: readonly Permission[] = Object.freeze([])
+const EMPTY_AUTHORITIES: readonly Permission[] = Object.freeze([]);
 export const selectUser = (s: AuthState): AuthUser | null => s.user;
 export const selectIsAuthenticated = (s: AuthState): boolean => s.user !== null;
 export const selectIsReady = (s: AuthState): boolean => s.isReady;

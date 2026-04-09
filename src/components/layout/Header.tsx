@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUiStore } from "@/store/ui.store";
 import { Bell, Building2, LogOut, Menu } from "lucide-react";
 import { ProtectedComponent } from "../ProtectedComponent";
+import { Link } from "react-router";
 
 interface HeaderProps {
   title: string;
@@ -32,10 +33,13 @@ export function Header({ title }: HeaderProps) {
         </button>
 
         <ProtectedComponent permission="notification:read">
-          <button className="relative rounded-full p-2 hover:bg-gray-100">
+          <Link
+            to={"/notifications"}
+            className="relative rounded-full p-2 hover:bg-gray-100"
+          >
             <Bell className="h-5 w-5 text-gray-600" />
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-brand-orange" />
-          </button>
+          </Link>
         </ProtectedComponent>
 
         <div className="flex items-center gap-2 sm:gap-3">

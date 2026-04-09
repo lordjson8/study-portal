@@ -89,7 +89,7 @@ function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
         <Logo />
         <button
           onClick={onNavigate}
-          className="rounded-lg p-1 text-gray-500 hover:bg-gray-100lg:hidden"
+          className="rounded-lg p-1 lg:hidden text-gray-500 hover:bg-gray-100lg:hidden"
           aria-label="Fermer le menu"
         >
           <X className="h-5 w-5" />

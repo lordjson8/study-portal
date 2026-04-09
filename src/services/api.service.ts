@@ -1,14 +1,19 @@
-import axios, {AxiosError, type AxiosRequestConfig, type AxiosResponse, type InternalAxiosRequestConfig} from 'axios'
-import { authService } from './auth.service';
-import { mockResolver } from './mockResolver';
-import { delay } from './mock';
+import axios, {
+  AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from "axios";
+import { authService } from "./auth.service";
+import { mockResolver } from "./mockResolver";
+import { delay } from "./mock";
 
 interface RetriableRequestConfig extends InternalAxiosRequestConfig {
-    _retried? : boolean
+  _retried?: boolean;
 }
 
-const baseURL = (import.meta.env['VITE_API_BASE_URL'] as string | undefined) ?? '/api';
-
+const baseURL =
+  (import.meta.env["VITE_API_BASE_URL"] as string | undefined) ?? "/api";
 
 export const apiClient = axios.create({
   baseURL,
@@ -18,7 +23,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use((config) => {
   const token = authService.getToken();
   if (token) {
-    config.headers.set('Authorization', `Bearer ${token}`);
+    config.headers.set("Authorization", `Bearer ${token}`);
   }
   return config;
 });
@@ -35,7 +40,7 @@ apiClient.interceptors.response.use(
         await authService.refresh();
         const token = authService.getToken();
         if (token) {
-          config.headers.set('Authorization', `Bearer ${token}`);
+          config.headers.set("Authorization", `Bearer ${token}`);
         }
         return apiClient.request(config);
       } catch {
@@ -45,6 +50,7 @@ apiClient.interceptors.response.use(
 
     if (!error.response && config) {
       const fake = await fakeResponseFromMock(config);
+      console.log("config", fake);
       if (fake) return fake;
     }
 
@@ -55,15 +61,16 @@ apiClient.interceptors.response.use(
 async function fakeResponseFromMock(
   config: AxiosRequestConfig,
 ): Promise<AxiosResponse | null> {
-  const url = (config.url ?? '').toString();
-  const method = (config.method ?? 'GET').toString();
+  const url = (config.url ?? "").toString();
+  const method = (config.method ?? "GET").toString();
   const result = mockResolver({ method, url });
+  console.log(result);
   if (!result) return null;
   await delay();
   return {
     data: result,
     status: 200,
-    statusText: 'OK (mock fallback)',
+    statusText: "OK (mock fallback)",
     headers: {},
     config: config as InternalAxiosRequestConfig,
   };

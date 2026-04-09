@@ -18,14 +18,14 @@ export function useAuth(): UseAuthReturn {
   const user = useAuthStore(selectUser);
   const isAuthenticated = useAuthStore(selectIsAuthenticated);
   const isReady = useAuthStore(selectIsReady);
-  const login = useAuthStore(s => s.login)
-  const logout = useAuthStore(s  => s.logout)
+  const login = useAuthStore((s) => s.login);
+  const logout = useAuthStore((s) => s.logout);
 
   return {
     user,
     isAuthenticated,
     isReady,
     login,
-    logout
+    logout,
   };
 }

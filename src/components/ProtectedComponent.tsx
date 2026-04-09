@@ -25,23 +25,22 @@ type ProtectedComponentProps =
       fallback?: ReactNode;
     };
 
-
 export function ProtectedComponent(props: ProtectedComponentProps): ReactNode {
-    const { hasAllPermissions,hasAnyPermission,hasPermission } = usePermissions()
+  const { hasAllPermissions, hasAnyPermission, hasPermission } =
+    usePermissions();
 
-    let allowed = false;
+  let allowed = false;
 
-    if('permission' in props && props.permission){
-        allowed = hasPermission(props.permission);
-    } else if('anyOf' in props && props.anyOf){
-        allowed = hasAnyPermission(props.anyOf);
-    } else if('allOf' in props && props.allOf){
-        allowed = hasAllPermissions(props.allOf);
-    }
+  if ("permission" in props && props.permission) {
+    allowed = hasPermission(props.permission);
+  } else if ("anyOf" in props && props.anyOf) {
+    allowed = hasAnyPermission(props.anyOf);
+  } else if ("allOf" in props && props.allOf) {
+    allowed = hasAllPermissions(props.allOf);
+  }
 
-    
-    if (!allowed) {
-        return props.fallback ?? null;
-    }
-    return props.children
+  if (!allowed) {
+    return props.fallback ?? null;
+  }
+  return props.children;
 }
