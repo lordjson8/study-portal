@@ -12,7 +12,7 @@ export interface JwtClaims {
     roles: string[];
   };
   resource_access: {
-    [clientId: string]: {
+    [clientId: string | 'account']: {
       roles: string[];
     };
   };

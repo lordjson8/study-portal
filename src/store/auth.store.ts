@@ -20,7 +20,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   bootstrap: async () => {
     if (get().isReady) return;
 
+     try {
     await authService.init();
+  } catch (e) {
+    console.error("Auth init failed", e);
+    // still mark as ready so the app doesn't hang
+  }
 
     set({ user: authService.getCurrentUser(), isReady: true });
   },
@@ -37,6 +42,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   refreshUser: async () => {
     await authService.refresh();
+    set({ user: authService.getCurrentUser() });
   },
 }));
 

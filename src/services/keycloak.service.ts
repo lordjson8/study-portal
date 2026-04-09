@@ -1,5 +1,6 @@
 import type Keycloak from "keycloak-js";
 import type { AuthEngine } from "./auth.service";
+// import { useAuthStore } from "@/store/auth.store";
 
 let kc: Keycloak | null = null;
 
@@ -19,7 +20,24 @@ async function ensure(): Promise<Keycloak> {
 export const KeycloakAuth: AuthEngine = {
   async init(): Promise<void> {
     const k = await ensure();
-    await k.init({ onLoad: "check-sso", pkceMethod: "S256" });
+    await k.init({
+      onLoad: "check-sso",
+      silentCheckSsoRedirectUri:
+        window.location.origin + "/silent-check-sso.html",
+      pkceMethod: "S256",
+    });
+    //  k.login()
+    console.log("authenticated:", k.authenticated);
+    console.log("token:", k.token);
+    console.log("parsed token:", k.tokenParsed);
+
+    // k.onAuthSuccess = () => {
+    //   useAuthStore.getState().refreshUser();
+    // };
+
+    // k.onTokenExpired = () => {
+    //   k.updateToken(30).catch(() => k.login());
+    // };
   },
 
   async login(): Promise<void> {

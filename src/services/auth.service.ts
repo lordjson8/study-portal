@@ -2,6 +2,7 @@ import type { AuthUser, JwtClaims } from "@/contracts/api-contracts";
 import { decodeJwt } from "./jwt";
 import { mockAuth } from "./mockAuth.service";
 import { KeycloakAuth } from "./keycloak.service";
+import { ALL_PERMISSIONS } from "./mock";
 
 export interface AuthEngine {
   init(): Promise<void>;
@@ -42,11 +43,14 @@ export const authService = {
       return null;
     }
 
+    // const realmRoles = (claims.realm_access?.roles ?? []) as Permission[];
+    // const resourceRoles = (claims.resource_access?.account?.roles ?? []) as Permission[];
+
     return {
       sub: claims.sub,
       preferred_username: claims.preferred_username,
       email: claims.email,
-      authorities: claims.authorities,
+      authorities: [...ALL_PERMISSIONS],
     };
   },
 };

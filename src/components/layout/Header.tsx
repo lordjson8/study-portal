@@ -1,15 +1,23 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useUiStore } from "@/store/ui.store";
-import { Bell, Building2, LogOut, Menu } from "lucide-react";
+import { Bell, Building2, ChevronDown, Menu } from "lucide-react";
 import { ProtectedComponent } from "../ProtectedComponent";
 import { Link } from "react-router";
+import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   title: string;
 }
 
 export function Header({ title }: HeaderProps) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const openSidebar = useUiStore((s) => s.openSidebar);
 
   return (
@@ -52,16 +60,41 @@ export function Header({ title }: HeaderProps) {
             </div>
             <div className="text-xs text-gray-500">{user?.email ?? ""}</div>
           </div>
-          <button
-            onClick={() => void logout()}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
-            aria-label="Se déconnecter"
-            title="Se déconnecter"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+          <ProfileDropdownMenu>
+            <button
+              className="rounded-full border border-gray-200 p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+              aria-label="Se déconnecter"
+              title="Se déconnecter"
+            >
+              <ChevronDown className="h-4 w-4" />
+            </button>
+          </ProfileDropdownMenu>
         </div>
       </div>
     </header>
+  );
+}
+
+function ProfileDropdownMenu({ children }: { children: React.ReactNode }) {
+    const { logout } = useAuth();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem>
+          <UserIcon />
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <SettingsIcon />
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive" onClick={() => void logout()}>
+          <LogOutIcon />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

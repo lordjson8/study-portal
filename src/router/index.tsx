@@ -75,7 +75,7 @@ export const router = createBrowserRouter([
             element: <RequirePermission permission="ticket:read" />,
             children: [
               {
-                path: "Souscriptions",
+                path: "souscriptions",
                 element: (
                   <Suspense
                     fallback={

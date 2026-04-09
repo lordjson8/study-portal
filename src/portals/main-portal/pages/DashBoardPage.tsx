@@ -1,135 +1,91 @@
-type status = "Active" | "On Leave" | "Inactive";
+import { Link } from "react-router";
+import { FileText, Receipt, Bell } from "lucide-react";
+import { ProtectedComponent } from "@/components/ProtectedComponent";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function DashBoardPage() {
-  const data: {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    department: string;
-    location: string;
-    status: status;
-    joined: string;
-  }[] = [
-    {
-      id: 1,
-      name: "Alice Johnson",
-      email: "alice.johnson@example.com",
-      role: "Senior Frontend Engineer",
-      department: "Engineering",
-      location: "San Francisco, CA",
-      status: "Active",
-      joined: "Jan 12, 2021",
-    },
-    {
-      id: 2,
-      name: "Bob Martinez",
-      email: "bob.martinez@example.com",
-      role: "Product Manager",
-      department: "Product",
-      location: "New York, NY",
-      status: "Active",
-      joined: "Mar 3, 2020",
-    },
-    {
-      id: 3,
-      name: "Carol Smith",
-      email: "carol.smith@example.com",
-      role: "UX Designer",
-      department: "Design",
-      location: "Austin, TX",
-      status: "On Leave",
-      joined: "Jul 19, 2022",
-    },
-    {
-      id: 4,
-      name: "David Lee",
-      email: "david.lee@example.com",
-      role: "Backend Engineer",
-      department: "Engineering",
-      location: "Seattle, WA",
-      status: "Active",
-      joined: "Nov 8, 2019",
-    },
-    {
-      id: 5,
-      name: "Eva Chen",
-      email: "eva.chen@example.com",
-      role: "Data Analyst",
-      department: "Analytics",
-      location: "Chicago, IL",
-      status: "Inactive",
-      joined: "Feb 25, 2023",
-    },
-  ];
+interface TileProps {
+  to: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  cta: string;
+  imageUrl?: string;
+}
 
-  const statusStyles: Record<status, string> = {
-    Active: "bg-green-100 text-green-700",
-    "On Leave": "bg-yellow-100 text-yellow-700",
-    Inactive: "bg-red-100 text-red-700",
+function Tile({ to, title, description, icon: Icon, cta, imageUrl }: TileProps) {
+    const containerStyle: React.CSSProperties = {
+    backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${imageUrl}')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   };
   return (
-    <div className="overflow-x-auto rounded-xl shadow-sm border border-gray-200">
-      <table className="min-w-full bg-white text-sm text-left">
-        <thead className="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
-          <tr>
-            {[
-              "#",
-              "Name",
-              "Email",
-              "Role",
-              "Department",
-              "Location",
-              "Status",
-              "Joined",
-            ].map((heading) => (
-              <th
-                key={heading}
-                className="px-6 py-4 font-semibold whitespace-nowrap"
-              >
-                {heading}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {data.map((row) => (
-            <tr
-              key={row.id}
-              className="hover:bg-gray-50 transition-colors duration-150"
-            >
-              <td className="px-6 py-4 text-gray-400 font-mono">{row.id}</td>
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                {row.name}
-              </td>
-              <td className="px-6 py-4 text-gray-500 whitespace-nowrap">
-                {row.email}
-              </td>
-              <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                {row.role}
-              </td>
-              <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                {row.department}
-              </td>
-              <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
-                {row.location}
-              </td>
-              <td className="px-6 py-4">
-                <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-                    statusStyles[row.status]
-                  }`}
-                >
-                  {row.status}
-                </span>
-              </td>
-              <td className="px-6 py-4 text-gray-500 whitespace-nowrap">
-                {row.joined}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <Link
+      to={to}
+      className="group flex flex-col items-center rounded-2xl border border-gray-200 bg-white  shadow-sm transition hover:-translate-y-0.5 hover:border-brand-blue hover:shadow-md"
+    >
+      <div className={`p-8 lex flex-col items-center gap-3 flex rounded-t-2xl w-full`} style={containerStyle}>
+        {" "}
+        <div className="flex h-10  w-10 items-center justify-center rounded-xl  text-brand-blue">
+          <Icon className="h-7 w-7 text-white" />
+        </div>
+        <div className="text-base font-semibold text-white">{title}</div>
+        <div className="text-sm text-white">{description}</div>
+      </div>
+
+      <span className="inline-flex w-full items-center justify-center  rounded-b-2xl p-3 bg-brand-orange px-3 text-center text-xs font-medium text-white group-hover:brightness-110">
+        {cta}
+      </span>
+    </Link>
+  );
+}
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <h2 className="text-2xl font-semibold text-gray-900">
+          Bonjour {user?.preferred_username} 👋
+        </h2>
+        <p className="text-sm text-gray-500">
+          Voici les services disponibles pour votre profil.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ProtectedComponent permission="ticket:read">
+          <Tile
+            to="/souscriptions"
+            title="Souscriptions"
+            description="Vos demandes de financement et leur statut."
+            icon={FileText}
+            cta="Voir mes demandes"
+            imageUrl="/images/1.png"
+          />
+        </ProtectedComponent>
+
+        <ProtectedComponent permission="document:read">
+          <Tile
+            to="/documents"
+            title="Attestations"
+            description="Téléchargez vos justificatifs et attestations."
+            icon={Receipt}
+            imageUrl="/images/3.png"
+            cta="Voir les documents"
+          />
+        </ProtectedComponent>
+
+        <ProtectedComponent permission="notification:read">
+          <Tile
+            to="/notifications"
+            title="Notifications"
+            description="Vos alertes et mises à jour récentes."
+            icon={Bell}
+            imageUrl="/images/2.png"
+            cta="Ouvrir le centre"
+          />
+        </ProtectedComponent>
+      </div>
     </div>
   );
 }
