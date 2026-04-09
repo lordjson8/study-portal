@@ -1,5 +1,3 @@
-import React from "react";
-
 type status = "Active" | "On Leave" | "Inactive";
 
 export default function DashBoardPage() {
