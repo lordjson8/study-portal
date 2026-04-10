@@ -25,3 +25,4 @@ guide.md
 *.njsproj
 *.sln
 *.sw?
+.env
