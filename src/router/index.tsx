@@ -8,57 +8,75 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, Navigate, Outlet } from "react-router";
 
 // eslint-disable-next-line react-refresh/only-export-components
-const SouscriptionsPage = lazy(() => {
-  return import("@/portals/main-portal/features/souscriptions/pages/SouscriptionsListPage").then(
+const SouscriptionsPage = lazy(() =>
+  import("@/portals/main-portal/features/souscriptions/pages/SouscriptionsListPage").then(
     (m) => ({ default: m.SouscriptionsListPage }),
-  );
-});
+  ),
+);
 
 // eslint-disable-next-line react-refresh/only-export-components
-const SouscriptionDetailPage = lazy(() => {
-  return import("@/portals/main-portal/features/souscriptions/pages/SouscriptionDetailPage").then(
+const SouscriptionDetailPage = lazy(() =>
+  import("@/portals/main-portal/features/souscriptions/pages/SouscriptionDetailPage").then(
     (m) => ({ default: m.SouscriptionDetailPage }),
-  );
-});
+  ),
+);
 
 // eslint-disable-next-line react-refresh/only-export-components
-const CreateSouscriptionPage = lazy(() => {
-  return import("@/portals/main-portal/features/souscriptions/pages/CreateSouscriptionPage").then(
+const CreateSouscriptionPage = lazy(() =>
+  import("@/portals/main-portal/features/souscriptions/pages/CreateSouscriptionPage").then(
     (m) => ({ default: m.CreateSouscriptionPage }),
-  );
-});
+  ),
+);
 
 // eslint-disable-next-line react-refresh/only-export-components
 const DocumentsListPage = lazy(() =>
   import("@/portals/main-portal/features/documents/pages/DocumentsListPage").then(
-    (m) => ({
-      default: m.DocumentsListPage,
-    }),
+    (m) => ({ default: m.DocumentsListPage }),
   ),
+);
+
+// eslint-disable-next-line react-refresh/only-export-components
+const NotificationsPage = lazy(() =>
+  import("@/portals/main-portal/features/notifications/NotificationsPage").then(
+    (m) => ({ default: m.NotificationsPage }),
+  ),
+);
+
+// eslint-disable-next-line react-refresh/only-export-components
+const Loader = () => (
+  <div className="flex h-screen items-center justify-center text-gray-400">
+    Chargement…
+  </div>
 );
 
 // eslint-disable-next-line react-refresh/only-export-components
 function RequireAuth() {
   const { isAuthenticated, isReady } = useAuth();
+  console.log("hi")
   if (!isReady) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-const NotificationsPage = lazy(() =>
-  import("@/portals/main-portal/features/notifications/NotificationsPage").then(
-    (m) => ({
-      default: m.NotificationsPage,
-    }),
-  ),
-);
+function RedirectIfAuth() {
+  const { isAuthenticated, isReady } = useAuth();
+  if (!isReady) return null;
+  if (isAuthenticated && !(import.meta.env.VITE_AUTH_MODE === "mock")) return <Navigate to="/" replace />;
+  return <Outlet />;
+}
 
 export const router = createBrowserRouter([
+  // Wrap /login so authenticated users are bounced to dashboard
   {
-    path: "/login",
-    element: <LoginPage />,
-    handle: { title: "Tableau de bords" },
+    element: <RedirectIfAuth />,
+    children: [
+      {
+        path: "/login",
+        element: <LoginPage />,
+        handle: { title: "Connexion" },
+      },
+    ],
   },
   {
     element: <RequireAuth />,
@@ -76,44 +94,22 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: "souscriptions",
-                element: (
-                  <Suspense
-                    fallback={
-                      <div className="flex flex-1 items-center justify-center text-gray-400">
-                        Chargement…
-                      </div>
-                    }
-                  >
-                    <SouscriptionsPage />
-                  </Suspense>
-                ),
+                element: <Suspense fallback={<Loader />}><SouscriptionsPage /></Suspense>,
                 handle: { title: "Souscriptions" },
               },
               {
                 path: "souscriptions/:id",
-                element: (
-                  <Suspense
-                    fallback={<div className="text-gray-400">Chargement…</div>}
-                  >
-                    <SouscriptionDetailPage />
-                  </Suspense>
-                ),
+                element: <Suspense fallback={<Loader />}><SouscriptionDetailPage /></Suspense>,
                 handle: { title: "Détail de la demande" },
               },
             ],
           },
           {
-            element: <RequirePermission permission="ticket:read" />,
+            element: <RequirePermission permission="ticket:create" />,
             children: [
               {
                 path: "souscriptions/nouvelle",
-                element: (
-                  <Suspense
-                    fallback={<div className="text-gray-400">Chargement…</div>}
-                  >
-                    <CreateSouscriptionPage />
-                  </Suspense>
-                ),
+                element: <Suspense fallback={<Loader />}><CreateSouscriptionPage /></Suspense>,
                 handle: { title: "Nouvelle demande" },
               },
             ],
@@ -123,13 +119,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: "notifications",
-                element: (
-                  <Suspense
-                    fallback={<div className="text-gray-400">Chargement…</div>}
-                  >
-                    <NotificationsPage />
-                  </Suspense>
-                ),
+                element: <Suspense fallback={<Loader />}><NotificationsPage /></Suspense>,
                 handle: { title: "Notifications" },
               },
             ],
@@ -139,18 +129,11 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: "documents",
-                element: (
-                  <Suspense
-                    fallback={<div className="text-gray-400">Chargement…</div>}
-                  >
-                    <DocumentsListPage />
-                  </Suspense>
-                ),
+                element: <Suspense fallback={<Loader />}><DocumentsListPage /></Suspense>,
                 handle: { title: "Attestations" },
               },
             ],
           },
-
           { path: "*", element: <Page404 /> },
         ],
       },

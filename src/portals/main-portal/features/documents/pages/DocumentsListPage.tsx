@@ -50,7 +50,7 @@ export function DocumentsListPage() {
             Vos justificatifs et documents officiels.
           </p>
         </div>
-        <ProtectedComponent permission="document:read">
+        <ProtectedComponent permission="document:upload">
           <button className="inline-flex items-center gap-2 rounded-xl bg-brand-orange px-4 py-2 text-sm font-medium text-white hover:brightness-110">
             <Upload className="h-4 w-4" />
             Joindre un fichier

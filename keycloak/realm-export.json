@@ -1,0 +1,153 @@
+{
+  "realm": "boaz-study",
+  "enabled": true,
+  "displayName": "BOAZ-STUDY",
+  "displayNameHtml": "<strong>BOAZ</strong>-STUDY",
+  "loginTheme": "keycloak",
+  "accessTokenLifespan": 300,
+  "ssoSessionMaxLifespan": 36000,
+  "ssoSessionIdleTimeout": 1800,
+
+  "roles": {
+    "realm": [
+      { "name": "ADMIN",    "description": "Full access" },
+      { "name": "AGENT",    "description": "Agent: create, read, comment; no update" },
+      { "name": "USER",     "description": "Standard user: read + comment only" },
+      { "name": "READONLY", "description": "Audit read-only" }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "studyportal-app",
+      "name": "StudyPortal Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+
+      "rootUrl": "http://localhost:5173",
+      "baseUrl": "http://localhost:5173",
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+
+      "protocol": "openid-connect",
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+
+      "protocolMappers": [
+        {
+          "name": "authorities-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "authorities",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "authorities",
+            "jsonType.label": "String",
+            "multivalued": "true"
+          }
+        }
+      ]
+    }
+  ],
+
+  "users": [
+    {
+      "username": "admin.boaz",
+      "email": "admin@boaz-study.com",
+      "firstName": "Admin",
+      "lastName": "BOAZ",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "admin123", "temporary": false }
+      ],
+      "realmRoles": ["ADMIN"],
+      "attributes": {
+        "authorities": [
+          "ticket:create",
+          "ticket:read",
+          "ticket:update",
+          "ticket:comment",
+          "document:upload",
+          "document:read",
+          "document:download",
+          "notification:read"
+        ]
+      }
+    },
+    {
+      "username": "agent.boaz",
+      "email": "agent@boaz-study.com",
+      "firstName": "Agent",
+      "lastName": "BOAZ",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "agent123", "temporary": false }
+      ],
+      "realmRoles": ["AGENT"],
+      "attributes": {
+        "authorities": [
+          "ticket:create",
+          "ticket:read",
+          "ticket:comment",
+          "document:upload",
+          "document:read",
+          "document:download",
+          "notification:read"
+        ]
+      }
+    },
+    {
+      "username": "user.boaz",
+      "email": "user@boaz-study.com",
+      "firstName": "Utilisateur",
+      "lastName": "BOAZ",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "user123", "temporary": false }
+      ],
+      "realmRoles": ["USER"],
+      "attributes": {
+        "authorities": [
+          "ticket:read",
+          "ticket:comment",
+          "document:read",
+          "document:download",
+          "notification:read"
+        ]
+      }
+    },
+    {
+      "username": "readonly.boaz",
+      "email": "readonly@boaz-study.com",
+      "firstName": "Lecteur",
+      "lastName": "BOAZ",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "readonly123", "temporary": false }
+      ],
+      "realmRoles": ["READONLY"],
+      "attributes": {
+        "authorities": [
+          "ticket:read",
+          "document:read",
+          "notification:read"
+        ]
+      }
+    }
+  ]
+}

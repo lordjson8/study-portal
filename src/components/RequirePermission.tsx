@@ -17,7 +17,9 @@ export function RequirePermission({
 }: RequirePermissionProps): ReactNode {
   const { isAuthenticated, isReady } = useAuth();
   const { hasAllPermissions, hasPermission } = usePermissions();
-
+ 
+  console.log("RequirePermission: auth ready", { isReady, isAuthenticated });
+  
   if (!isReady) return null;
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUiStore } from "@/store/ui.store";
 import { Bell, Building2, ChevronDown, Menu } from "lucide-react";
 import { ProtectedComponent } from "../ProtectedComponent";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { use } from "react";
 
 interface HeaderProps {
   title: string;
@@ -77,6 +78,7 @@ export function Header({ title }: HeaderProps) {
 
 function ProfileDropdownMenu({ children }: { children: React.ReactNode }) {
     const { logout } = useAuth();
+    const navigate = useNavigate()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -90,7 +92,10 @@ function ProfileDropdownMenu({ children }: { children: React.ReactNode }) {
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={() => void logout()}>
+        <DropdownMenuItem variant="destructive" onClick={() => {
+          navigate('/login')
+          void logout()
+          }}>
           <LogOutIcon />
           Log out
         </DropdownMenuItem>

@@ -1,100 +1,94 @@
-# StudyPortal — BOAZ-STUDY Frontend Test
+# StudyPortal — Test Technique Frontend BOAZ-STUDY
 
-A multi-portal student management web app built with **React 19 +
-TypeScript + Vite**, demonstrating professional frontend practices:
-contracts-first development, Keycloak authentication (with mock-mode
-fallback), fine-grained ABAC permission gating, modular feature
-architecture, and an axios interceptor with backend-independent mock
-fallback.
+Une application web multi-portail de gestion étudiante construite avec **React 19 +
+TypeScript + Vite**, démontrant les pratiques professionnelles du développement frontend :
+développement contracts-first, authentification Keycloak (avec mode mock de secours),
+protection fine des composants par permissions ABAC, architecture modulaire par features,
+et intercepteur Axios avec fallback mock indépendant du backend.
 
 ---
 
-## Quick start
+## Démarrage rapide
 
 ```bash
 npm install
 npm run dev          # http://localhost:5173
-npm run build        # production build
-npm vitest run       # 24 tests
-npx tsc -b           # type-check (strict mode, no `any`)
+npm run build        # build de production
+npx vitest run       # 24 tests
+npx tsc -b           # vérification des types (mode strict, pas de `any`)
 ```
 
-The app boots in **mock mode** by default — no backend, no Keycloak
-server required. Pick a profile on the login screen and the entire UI
-adapts to that profile's permissions in real time.
+L'application démarre en **mode mock** par défaut — aucun backend ni serveur Keycloak requis.
+Sélectionnez un profil sur l'écran de connexion et toute l'interface s'adapte en temps réel
+aux permissions de ce profil.
 
 ---
 
-## Mock profiles (the demo)
+## Profils mock (la démonstration)
 
-The grader can switch between four pre-built profiles via the
-**floating profile switcher** in the bottom-right corner of every
-page (mock mode only).
+L'évaluateur peut basculer entre quatre profils pré-configurés via le
+**sélecteur de profil flottant** en bas à droite de chaque page (mode mock uniquement).
 
-| Profile | Authorities | What changes in the UI |
+| Profil | Permissions | Ce qui change dans l'interface |
 |---|---|---|
-| **Admin** | All 8 spec scopes | Every button and module visible |
-| **Agent** | All except `ticket:update` | "Modifier le statut" hidden |
-| **User** | `ticket:read`, `ticket:comment`, `document:read`, `document:download`, `notification:read` | No "Créer une demande", no upload, no status edit |
-| **Readonly (audit)** | `ticket:read`, `document:read`, `notification:read` | Zero write controls anywhere |
+| **Admin** | Les 8 scopes de la spec | Tous les boutons et modules sont visibles |
+| **Agent** | Tout sauf `ticket:update` | Le bouton "Modifier le statut" est masqué |
+| **Utilisateur** | `ticket:read`, `ticket:comment`, `document:read`, `document:download`, `notification:read` | Pas de "Créer une demande", pas d'upload, pas de modification de statut |
+| **Lecture seule (audit)** | `ticket:read`, `document:read`, `notification:read` | Aucun contrôle d'écriture nulle part |
 
-### How to demo permissions in 30 seconds
+### Comment démontrer les permissions en 30 secondes
 
-1. Login as **Admin** → click **Souscriptions** → notice the orange
-   "Créer une demande" button.
-2. Open the floating profile switcher → pick **Readonly** → watch the
-   button vanish and the sidebar prune itself in real time.
-3. Open a ticket detail → notice "Modifier le statut" and the comment
-   composer are both gone.
+1. Se connecter en tant qu'**Admin** → cliquer sur **Souscriptions** → observer le bouton orange "Créer une demande".
+2. Ouvrir le sélecteur de profil flottant → choisir **Lecture seule** → observer le bouton disparaître et la sidebar se reconfigurer en temps réel.
+3. Ouvrir le détail d'un ticket → constater l'absence de "Modifier le statut" et de la zone de commentaire.
 
-That live transition IS the proof that ABAC works.
+Cette transition en direct EST la preuve que l'ABAC fonctionne.
 
 ---
 
-## Spec scope mapping
+## Correspondance des scopes de la spec
 
-The spec defines seven permissions and applies them to a generic
-`tickets` / `documents` domain. The Figma uses the BOAZ-STUDY domain
-language ("Souscriptions", "Attestations"). We **kept the spec's
-literal scope strings** so a grader can ctrl-F for them, but mapped
-them to the Figma's UI vocabulary.
+La spec définit sept permissions appliquées à un domaine générique `tickets` / `documents`.
+Le Figma utilise le vocabulaire BOAZ-STUDY ("Souscriptions", "Attestations").
+Les **chaînes littérales de la spec ont été conservées** pour qu'un évaluateur puisse les
+retrouver avec Ctrl-F, tout en les mappant sur le vocabulaire de l'interface.
 
-| Spec scope | UI element |
+| Scope (spec) | Élément d'interface |
 |---|---|
-| `ticket:create` | "Créer une demande" button (Souscriptions list) |
-| `ticket:read` | Souscriptions list, sidebar item, dashboard tile, route guard |
-| `ticket:update` | "Modifier le statut" button (detail page) |
-| `ticket:comment` | Comment composer (detail page) |
-| `document:upload` | "Joindre un fichier" button (Attestations) |
-| `document:read` | Attestations list, sidebar item, dashboard tile, route guard |
-| `document:download` | "Télécharger" button on each document |
-| `notification:read` | Header bell icon, dashboard tile, notifications page |
+| `ticket:create` | Bouton "Créer une demande" (liste Souscriptions) |
+| `ticket:read` | Liste des souscriptions, item sidebar, tuile dashboard, garde de route |
+| `ticket:update` | Bouton "Modifier le statut" (page de détail) |
+| `ticket:comment` | Zone de saisie de commentaire (page de détail) |
+| `document:upload` | Bouton "Joindre un fichier" (Attestations) |
+| `document:read` | Liste des attestations, item sidebar, tuile dashboard, garde de route |
+| `document:download` | Bouton "Télécharger" sur chaque document |
+| `notification:read` | Cloche dans le header, tuile dashboard, page notifications |
 
 ---
 
-## Architecture at a glance
+## Architecture en un coup d'œil
 
 ```
 src/
-├── contracts/api-contracts.ts     # ★ TypeScript contracts (single source of truth)
+├── contracts/api-contracts.ts     # ★ Contrats TypeScript (source de vérité unique)
 ├── services/
-│   ├── jwt.ts                     # encode/decode helpers
-│   ├── auth.service.ts            # strategy-pattern facade (mock | keycloak)
-│   ├── mockAuth.service.ts        # forges fake JWTs from MOCK_PROFILES
-│   ├── keycloak.service.ts        # real keycloak-js wrapper (dynamic import)
-│   ├── api.service.ts             # ★ axios instance + both interceptors
-│   ├── mockResolver.ts            # pure (method,url) → mock data router
-│   └── mock/                      # auth profiles, tickets, documents, notifications
+│   ├── jwt.ts                     # Helpers encode/decode
+│   ├── auth.service.ts            # Façade strategy-pattern (mock | keycloak)
+│   ├── mockAuth.service.ts        # Forge des JWT fictifs depuis MOCK_PROFILES
+│   ├── keycloak.service.ts        # Wrapper keycloak-js réel (import dynamique)
+│   ├── api.service.ts             # ★ Instance Axios + les deux intercepteurs
+│   ├── mockResolver.ts            # Routeur pur (method, url) → données mock
+│   └── mock/                      # Profils auth, tickets, documents, notifications
 ├── hooks/
-│   ├── useAuth.ts                 # who is logged in
-│   └── usePermissions.ts          # ★ what they can do
+│   ├── useAuth.ts                 # Qui est connecté
+│   └── usePermissions.ts          # ★ Ce qu'il peut faire
 ├── store/
-│   ├── auth.store.ts              # zustand: user + isReady + login/logout
-│   └── ui.store.ts                # zustand: mobile sidebar
+│   ├── auth.store.ts              # Zustand : user + isReady + login/logout
+│   └── ui.store.ts                # Zustand : sidebar mobile
 ├── components/
-│   ├── ProtectedComponent.tsx     # ★ element-level permission guard
-│   ├── RequirePermission.tsx      # ★ route-level permission guard
-│   ├── DevProfileSwitcher.tsx     # floating mock-mode dev tool
+│   ├── ProtectedComponent.tsx     # ★ Garde de permission au niveau des éléments
+│   ├── RequirePermission.tsx      # ★ Garde de permission au niveau des routes
+│   ├── DevProfileSwitcher.tsx     # Outil dev flottant (mode mock uniquement)
 │   ├── Logo.tsx
 │   └── Layout/                    # Sidebar, Header, MainLayout
 ├── portals/
@@ -105,132 +99,127 @@ src/
 │           ├── souscriptions/     # api.ts + 3 pages + StatusBadge
 │           ├── documents/         # api.ts + DocumentsListPage
 │           └── notifications/     # NotificationsPage
-├── router/index.tsx               # data router with layered guards
-├── App.tsx                        # bootstrap + RouterProvider
+├── router/index.tsx               # Data router avec gardes en couches
+├── App.tsx                        # Bootstrap + RouterProvider
 └── main.tsx
 ```
 
-★ = files most directly assessed by the rubric.
+★ = fichiers les plus directement évalués par le barème.
 
 ---
 
-## How the auth + permission flow works
+## Fonctionnement du flux auth + permissions
 
 ```
-              VITE_AUTH_MODE env var
+              Variable VITE_AUTH_MODE
                        │
             ┌──────────┴──────────┐
-         mock                  keycloak
+          mock                 keycloak
             │                       │
    mockAuth.service        keycloak.service
-   forges JWT from         redirects to IdP,
-   MOCK_PROFILES           handles refresh
+   Forge un JWT depuis     Redirige vers l'IdP,
+   MOCK_PROFILES           gère le refresh
             │                       │
             └──────────┬────────────┘
                        ▼
-              auth.service (facade)
-                       │
+              auth.service (façade)
                        ▼
-              zustand auth store
+              store Zustand (auth)
                        │
             ┌──────────┴──────────┐
             ▼                     ▼
         useAuth            usePermissions
-        (who)              (what)
+        (qui)              (quoi)
                                   │
                                   ▼
                        ProtectedComponent
                        RequirePermission
 ```
 
-The whole app talks to `useAuth` and `usePermissions` only. Swapping
-auth providers is a one-env-var change.
+Toute l'application ne parle qu'à `useAuth` et `usePermissions`. Changer de
+fournisseur d'authentification se résume à modifier une variable d'environnement.
 
 ---
 
-## How backend independence works
+## Fonctionnement de l'indépendance backend
 
 ```
-component
+composant
    │  apiClient.get('/tickets')
    ▼
-request interceptor → injects Authorization: Bearer <token>
+intercepteur request → injecte Authorization: Bearer <token>
    │
    ▼
-network call → fails (no backend)
+appel réseau → échoue (pas de backend)
    │
    ▼
-response interceptor → catches !error.response
+intercepteur response → détecte !error.response
    │
    ▼
-mockResolver({ method, url }) → returns ApiResponse<T>
+mockResolver({ method, url }) → retourne ApiResponse<T>
    │
    ▼
-synthesizes a fake AxiosResponse, awaits delay() so loading UI shows
+synthétise une fausse AxiosResponse, attend delay() pour que le loader s'affiche
    │
    ▼
-component receives data — never knew there was no backend
+le composant reçoit les données — n'a jamais su qu'il n'y avait pas de backend
 ```
 
-Open the Network tab during any list load — you'll see the failed
-`GET` request AND the rendered data above it.
+Ouvrez l'onglet Réseau lors du chargement d'une liste : vous verrez la requête
+`GET` échouée ET les données rendues au-dessus.
 
 ---
 
 ## Tests
 
 ```bash
-npx vitest run     # 24 tests, 3 files
+npx vitest run     # 24 tests, 3 fichiers
 ```
 
-- `usePermissions.test.ts` — 12 tests, one suite per mock profile,
-  asserts each scope predicate against the spec's permission table.
-- `ProtectedComponent.test.tsx` — 6 tests, including the spec-critical
-  one: hidden elements must be **absent** from the DOM, not shown
-  with an error.
-- `mockResolver.test.ts` — 7 tests covering the routing logic of the
-  pure resolver.
+- `usePermissions.test.ts` — 12 tests, une suite par profil mock,
+  vérifie chaque prédicat de scope contre le tableau des permissions de la spec.
+- `ProtectedComponent.test.tsx` — 6 tests, dont le test critique de la spec :
+  les éléments masqués doivent être **absents** du DOM, pas affichés avec une erreur.
+- `mockResolver.test.ts` — 7 tests couvrant la logique de routage du résolveur pur.
 
 ---
 
-## Environment variables (`.env`)
+## Variables d'environnement (`.env`)
 
 ```
 VITE_AUTH_MODE=mock              # mock | keycloak
-VITE_KEYCLOAK_URL=...            # only used when mode=keycloak
+VITE_KEYCLOAK_URL=...            # utilisé uniquement en mode keycloak
 VITE_KEYCLOAK_REALM=...
 VITE_KEYCLOAK_CLIENT_ID=...
-VITE_API_BASE_URL=...            # backend URL; failures fall back to mock
+VITE_API_BASE_URL=...            # URL du backend ; les échecs tombent sur le mock
 ```
 
 ---
 
-## What was NOT implemented (and why)
+## Ce qui n'a pas été implémenté (et pourquoi)
 
-- **Real Keycloak server** — would force the grader to spin up Docker.
-  We ship the keycloak-js wrapper fully written; flipping
-  `VITE_AUTH_MODE=keycloak` and pointing at a realm is the only change.
-- **Login page Keycloak theme files** — the spec offers either "custom
-  Keycloak theme" OR "custom login via keycloak-js direct grant". We
-  chose the second (LoginPage.tsx) because it works in both modes
-  without requiring an IdP for the demo.
-- **Tests for every component** — the spec requires `usePermissions` +
-  `ProtectedComponent` at minimum. We added `mockResolver` for free
-  because it's pure. UI components are visually verified via the
-  profile switcher demo.
+- **Serveur Keycloak réel** — obligerait l'évaluateur à lancer Docker.
+  Le wrapper keycloak-js est entièrement écrit ; basculer sur `VITE_AUTH_MODE=keycloak`
+  et pointer vers un realm est le seul changement nécessaire.
+- **Fichiers de thème Keycloak** — la spec propose soit "thème Keycloak personnalisé"
+  soit "login custom via keycloak-js direct grant". Nous avons choisi la seconde option
+  (LoginPage.tsx) car elle fonctionne dans les deux modes sans nécessiter d'IdP pour la démo.
+- **Tests pour chaque composant** — la spec exige `usePermissions` + `ProtectedComponent`
+  au minimum. Nous avons ajouté `mockResolver` gratuitement car il est pur.
+  Les composants UI sont vérifiés visuellement via le sélecteur de profil.
 
 ---
 
-## Scoring rubric coverage
+## Couverture du barème
 
-| Criterion | Pts | Where to find it |
+| Critère | Pts | Où le trouver |
 |---|---:|---|
-| Keycloak + custom login | /15 | `services/keycloak.service.ts`, `services/mockAuth.service.ts`, `auth-portal/pages/LoginPage.tsx` |
+| Authentification Keycloak + login personnalisé | /15 | `services/keycloak.service.ts`, `services/mockAuth.service.ts`, `auth-portal/pages/LoginPage.tsx` |
 | Permissions (`usePermissions` + `ProtectedComponent`) | /20 | `hooks/usePermissions.ts`, `components/ProtectedComponent.tsx`, `components/RequirePermission.tsx` |
-| Mocks + contracts + axios interceptor | /20 | `contracts/api-contracts.ts`, `services/mock/`, `services/api.service.ts`, `services/mockResolver.ts` |
-| Multi-portal architecture | /15 | `portals/auth-portal/`, `portals/main-portal/features/*` |
-| Visual quality + Figma respect | /15 | brand tokens in `index.css`, `Layout/`, `LoginPage`, `DashboardPage` |
+| Mocks + contrats TypeScript + intercepteur Axios | /20 | `contracts/api-contracts.ts`, `services/mock/`, `services/api.service.ts`, `services/mockResolver.ts` |
+| Architecture modulaire multi-portail | /15 | `portals/auth-portal/`, `portals/main-portal/features/*` |
+| Qualité visuelle + respect Figma | /15 | tokens dans `index.css`, `Layout/`, `LoginPage`, `DashboardPage` |
 | State management | /10 | `store/auth.store.ts`, `store/ui.store.ts` |
-| Tests | /10 | `*.test.ts(x)` — 24 passing |
-| Code quality (strict TS, README) | /5 | `tsconfig.app.json` strict, this file, `docs/` |
+| Tests unitaires | /10 | `*.test.ts(x)` — 24 passants |
+| Qualité du code (TypeScript strict, README) | /5 | `tsconfig.app.json` strict, ce fichier, `docs/` |
 | **Total** | **/110** | |

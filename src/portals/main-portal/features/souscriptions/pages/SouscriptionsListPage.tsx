@@ -26,7 +26,7 @@ export function SouscriptionsListPage() {
             Suivez l’avancement de vos demandes de financement.
           </p>
         </div>
-        <ProtectedComponent permission="ticket:read">
+        <ProtectedComponent permission="ticket:create">
           <Link
             to={"/souscriptions/nouvelle"}
             className="inline-flex items-center gap-2 rounded-xl bg-brand-orange text-white px-4 py-2 font-medium hover:brightness-110"
