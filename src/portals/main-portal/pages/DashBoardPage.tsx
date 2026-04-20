@@ -23,7 +23,7 @@ function Tile({ to, title, description, icon: Icon, cta, imageUrl }: TileProps) 
       to={to}
       className="group flex flex-col items-center rounded-2xl border border-gray-200 bg-white  shadow-sm transition hover:-translate-y-0.5 hover:border-brand-blue hover:shadow-md"
     >
-      <div className={`p-8 lex flex-col items-center gap-3 flex rounded-t-2xl w-full`} style={containerStyle}>
+      <div className={`p-8 lex flex-col flex-1 items-center gap-3 flex rounded-t-2xl w-full`} style={containerStyle}>
         {" "}
         <div className="flex h-10  w-10 items-center justify-center rounded-xl  text-brand-blue">
           <Icon className="h-7 w-7 text-white" />
